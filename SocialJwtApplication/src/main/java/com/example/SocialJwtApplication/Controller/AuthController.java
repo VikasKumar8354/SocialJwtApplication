@@ -11,6 +11,7 @@ import com.example.SocialJwtApplication.Service.AuthService;
 import com.example.SocialJwtApplication.Service.RefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,13 +71,16 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
+
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshToken -> {
                     refreshTokenService.verifyExpiration(refreshToken);
                     refreshTokenService.deleteByUserId(refreshToken.getUser().getId());
-                    return ResponseEntity.ok("Log out successful!");
+                    return ResponseEntity.ok("User logged out successfully!");
                 })
-                .orElseGet(() -> ResponseEntity.badRequest().body("Refresh token not found."));
+                .orElseGet(() -> ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid or expired token"));
     }
 
     @DeleteMapping("/delete/{userId}")

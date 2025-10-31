@@ -15,7 +15,7 @@ public class RefreshToken {
     @Column(nullable = false,unique = true,length = 200)
     private String token;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
