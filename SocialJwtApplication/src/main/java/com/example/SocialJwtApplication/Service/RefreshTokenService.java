@@ -48,7 +48,8 @@ public class RefreshTokenService {
     }
 
     public int deleteByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         return refreshTokenRepository.deleteByUser(user);
     }
 }

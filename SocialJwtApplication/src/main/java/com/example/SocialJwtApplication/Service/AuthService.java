@@ -30,6 +30,13 @@ public class AuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    private RefreshToken saveRefreshTokenForUser(User user) {
+        return refreshTokenService.createRefreshToken(user.getId());
+    }
+
     public String registerUser(SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             throw new RuntimeException("Error: Username is already taken!");
@@ -84,10 +91,4 @@ public class AuthService {
         return new JwtResponse(accessToken, refreshToken.getToken(), user.getId(), user.getUsername(), user.getEmail(), new ArrayList<>(user.getRoles()));
     }
 
-    @Autowired
-    private RefreshTokenService refreshTokenService;
-
-    private RefreshToken saveRefreshTokenForUser(User user) {
-        return refreshTokenService.createRefreshToken(user.getId());
-    }
 }
