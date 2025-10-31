@@ -12,10 +12,7 @@ import com.example.SocialJwtApplication.Service.RefreshTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -80,5 +77,19 @@ public class AuthController {
                     return ResponseEntity.ok("Log out successful!");
                 })
                 .orElseGet(() -> ResponseEntity.badRequest().body("Refresh token not found."));
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<?> deleteTokensByUserId(@PathVariable Long userId) {
+        try {
+            int deletedCount = refreshTokenService.deleteByUserId(userId);
+            if (deletedCount > 0) {
+                return ResponseEntity.ok("Deleted " + deletedCount + " refresh token(s) for user ID: " + userId);
+            } else {
+                return ResponseEntity.ok("No refresh tokens found for user ID: " + userId);
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
