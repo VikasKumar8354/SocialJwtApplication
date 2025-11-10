@@ -53,6 +53,7 @@ public class AuthService {
         user.setProfileImageUrl(signUpRequest.getProfileImageUrl());
         Set<String> strRoles = signUpRequest.getRoles();
         Set<String> roles = new HashSet<>();
+
         if (strRoles == null || strRoles.isEmpty()) {
             roles.add("ROLE_USER");
         } else {
@@ -62,7 +63,6 @@ public class AuthService {
             }
         }
         user.setRoles(roles);
-
         userRepository.save(user);
         return "User registered successfully!";
     }
@@ -88,7 +88,7 @@ public class AuthService {
         refreshToken.setExpiryDate(Instant.now().plusMillis(jwtUtils == null ? 0L : jwtUtils.generateRefreshToken() == null ? 0L : 0L));
 
         refreshToken = saveRefreshTokenForUser(user);
+
         return new JwtResponse(accessToken, refreshToken.getToken(), user.getId(), user.getUsername(), user.getEmail(), new ArrayList<>(user.getRoles()));
     }
-
 }
